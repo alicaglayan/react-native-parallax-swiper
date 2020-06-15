@@ -13,11 +13,9 @@ class ParallaxSwiper extends Component {
     width: deviceWidth,
     height: deviceHeight,
   };
-  scrollIndex = 0;
 
   componentDidMount() {
     const { scrollToIndex } = this.props;
-    this.scrollIndex = scrollToIndex;
 
     if (scrollToIndex) {
       setTimeout(() => {
@@ -26,12 +24,8 @@ class ParallaxSwiper extends Component {
     }
   }
 
-  componentDidUpdate(prevProps) {
-    const { scrollToIndex } = this.props;
-    if (prevProps.scrollToIndex !== this.scrollIndex) {
-      this.scrollIndex = scrollToIndex;
-      this.scrollToIndex(scrollToIndex);
-    }
+  componentWillReceiveProps(nextProps) {
+    this.scrollToIndex(nextProps.scrollToIndex);
   }
 
   onScrollEnd(e) {
@@ -61,7 +55,7 @@ class ParallaxSwiper extends Component {
       this.animatedScrollViewHasScrolled = true;
     }
 
-    this.animatedScrollView.current?.scrollTo({
+    this.animatedScrollView.scrollTo({
       x: vertical ? 0 : scrollOffset,
       y: vertical ? scrollOffset : 0,
       animated,
