@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { createRef, Component } from 'react';
 import { View, Animated, StyleSheet, Dimensions } from 'react-native';
 import PropTypes from 'prop-types';
 
@@ -9,23 +9,19 @@ import ParallaxSwiperPage, {
 const { width: deviceWidth, height: deviceHeight } = Dimensions.get('window');
 
 class ParallaxSwiper extends Component {
+  animatedScrollView = createRef();
   state = {
     width: deviceWidth,
     height: deviceHeight,
   };
 
-  componentDidMount() {
+  componentDidUpdate() {
     const { scrollToIndex } = this.props;
-
     if (scrollToIndex) {
       setTimeout(() => {
-        this.scrollToIndex(scrollToIndex, false);
+        this.scrollToIndex(scrollToIndex, true);
       });
     }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.scrollToIndex(nextProps.scrollToIndex);
   }
 
   onScrollEnd(e) {
@@ -55,7 +51,7 @@ class ParallaxSwiper extends Component {
       this.animatedScrollViewHasScrolled = true;
     }
 
-    this.animatedScrollView.scrollTo({
+    this.animatedScrollView.current.scrollTo({
       x: vertical ? 0 : scrollOffset,
       y: vertical ? scrollOffset : 0,
       animated,
@@ -86,9 +82,7 @@ class ParallaxSwiper extends Component {
     return (
       <View pointerEvents="box-none">
         <Animated.ScrollView
-          ref={(scrollView) => {
-            this.animatedScrollView = scrollView;
-          }}
+          ref={this.animatedScrollView}
           scrollEnabled={scrollEnabled}
           style={{
             width: vertical
